@@ -41,6 +41,8 @@ typedef struct
   int usuario;
   int quantidade_usuario;
   int menu;
+  int aux_posicao;
+  int id_aux;
   char login[MAX_C];
   char senha[MAX_C];
 } outrasVariaveis;
@@ -48,8 +50,8 @@ typedef struct
 // Funções do menu principal:
 void configInicial(dados *pessoa, dados *backup);                             // Função que atribui valores iniciais para as variáveis.
 void cadastraUsuario(dados *pessoa, outrasVariaveis codigo);                  // Função que cadastra um usuário.
-void editarUsuario(dados *pessoa);                                            // Função que edita um usuário.
-void excluiUsuario(dados *pessoa);                                            // Função que exclui um usuário.
+void editarUsuario(dados *pessoa, outrasVariaveis codigo);                    // Função que edita um usuário.
+void excluiUsuario(dados *pessoa, outrasVariaveis codigo);                    // Função que exclui um usuário.
 void pesquisarCadastro(dados *pessoa, outrasVariaveis codigo);                // Função que pesquisa um cadastro pelo ID.
 void pesquisarEmail(dados *pessoa, outrasVariaveis codigo);                   // Função que pesquisa um cadastro pelo email.
 void listaCadastro(dados *pessoa, outrasVariaveis codigo);                    // Função que mostra uma lista com todos os usuários cadastrados.
@@ -62,11 +64,11 @@ void verificaEmail(dados *pessoa, outrasVariaveis codigo);  // Função que veri
 void verificaGenero(dados *pessoa, outrasVariaveis codigo); // Função que verifica se o gênero é válido.
 void verificaAltura(dados *pessoa, outrasVariaveis codigo); // Função que verifica se a altura é válida.
 void verificaVacina(dados *pessoa, outrasVariaveis codigo); // Função que verifica se o usuário é vacinado.
-bool verificaID(dados *pessoa, int id_aux);                 // Função que verifica se o ID existe.
+bool verificaID(dados *pessoa, outrasVariaveis codigo);     // Função que verifica se o ID existe.
 // Outras funções:
-void criacaoConta(outrasVariaveis codigo);              // Função que cria uma conta (necessária para fazer o backup).
-void preencheId(dados *pessoa, outrasVariaveis codigo); // Função que radomiza os IDs.
-int pegaPosicaoID(dados *pessoa, int id_aux);           // Função que pega a posição do ID no vetor de IDs.
+void criacaoConta(outrasVariaveis codigo);                // Função que cria uma conta (necessária para fazer o backup).
+void preencheId(dados *pessoa, outrasVariaveis codigo);   // Função que radomiza os IDs.
+int pegaPosicaoID(dados *pessoa, outrasVariaveis codigo); // Função que pega a posição do ID no vetor de IDs.
 
 // Inicio do Algoritmo Principal:
 int main()
@@ -113,10 +115,10 @@ int main()
       codigo.quantidade_usuario++;
       break;
     case 2: // Edição de usuário.
-      editarUsuario(pessoa);
+      editarUsuario(pessoa, codigo);
       break;
     case 3: // Exclusão de usuário.
-      excluiUsuario(pessoa);
+      excluiUsuario(pessoa,codigo);
       codigo.quantidade_usuario--;
       break;
     case 4: // Pesquisa de usuário pelo ID.
@@ -180,36 +182,163 @@ void cadastraUsuario(dados *pessoa, outrasVariaveis codigo)
 {
   if (codigo.quantidade_usuario < MAX)
   {
-//    preencheId(pessoa->id, codigo);
+    //    preencheId(pessoa->id, codigo);
     printf("O seu ID é \"%d\".\n\n", pessoa[codigo.usuario].id);
     printf("Informe o seu nome completo: ");
-    /*fgets(nome_completo[usuario], MAX_C, stdin);
-    verificaNome(nome_completo, usuario);
+    fgets(pessoa[codigo.usuario].nome_completo, MAX_C, stdin);
+    verificaNome(pessoa, codigo);
     printf("Nome cadastrado com sucesso!\n\n");
     printf("Informe o seu email: ");
-    fgets(email[usuario], MAX_C, stdin);
-    verificaEmail(email, usuario);
+    fgets(pessoa[codigo.usuario].email, MAX_C, stdin);
+    verificaEmail(pessoa, codigo);
     printf("Email cadastrado com sucesso!\n\n");
     printf("Informe o seu gênero. [\"Feminino\", \"Masculino\" ou \"Não Declarar\"]: ");
-    fgets(genero[usuario], MAX_C, stdin);
-    verificaGenero(genero, usuario);
+    fgets(pessoa[codigo.usuario].genero, MAX_C, stdin);
+    verificaGenero(pessoa, codigo);
     printf("Gênero cadastrado com sucesso!\n\n");
-    printf("Informe o seu endereço: ");
-    fgets(endereco[usuario], MAX_C, stdin);
+    printf("Informe o endereço [CEP]: ");
+    scanf("%[^\n]", pessoa[codigo.usuario].endereco.cep);
+    getchar();
+    printf("Informe o endereço [ESTADO]: ");
+    scanf("%[^\n]", pessoa[codigo.usuario].endereco.estado);
+    getchar();
+    printf("Informe o endereço [CIDADE]: ");
+    scanf("%[^\n]", pessoa[codigo.usuario].endereco.cidade);
+    getchar();
+    printf("Informe o endereço [BAIRRO]: ");
+    scanf("%[^\n]", pessoa[codigo.usuario].endereco.bairro);
+    getchar();
+    printf("Informe o endereço [RUA]: ");
+    scanf("%[^\n]", pessoa[codigo.usuario].endereco.rua);
+    getchar();
     printf("Endereço cadastrado com sucesso!\n\n");
     printf("Informe a sua altura: ");
-    scanf("%lf", &altura[usuario]);
-    verificaAltura(altura, usuario);
+    scanf("%lf", &pessoa[codigo.usuario].altura);
+    verificaAltura(pessoa, codigo);
     getchar();
     printf("Altura cadastrada com sucesso.\n\n");
     printf("Você se vacinou? Escreva \"Sim\" ou \"Não\": ");
-    verificaVacina(vacina, usuario);
-    printf("Vacina cadastrada com sucesso!\n\n");*/
+    verificaVacina(pessoa, codigo);
+    printf("Vacina cadastrada com sucesso!\n\n");
   }
   else
   {
     system("cls");
     printf("A capacidade máxima de usuários cadastrados já foi atingida.\n");
   }
+  system("pause");
+}
+void editarUsuario(dados *pessoa, outrasVariaveis codigo)
+{
+  int menu_aux;
+  printf("Para editar, primeiro informe o seu ID: ");
+  scanf("%d", &codigo.id_aux);
+  getchar();
+  if (verificaID(pessoa, codigo) == true)
+  {
+    codigo.aux_posicao = pegaPosicaoID(pessoa, codigo);
+    do
+    {
+      system("cls");
+      printf("Dados cadastrados:\n");
+      printf("ID: %d \n", pessoa[codigo.aux_posicao].id);
+      printf("1 - Nome completo: %s", pessoa[codigo.aux_posicao].nome_completo);
+      printf("2 - Email: %s", pessoa[codigo.aux_posicao].email);
+      printf("3 - Gênero: %s", pessoa[codigo.aux_posicao].genero);
+      printf("4 - Endereço: %s", pessoa[codigo.aux_posicao].endereco);
+      printf("5 - Altura: %.2lf metros\n", pessoa[codigo.aux_posicao].altura);
+      ((pessoa[codigo.aux_posicao].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
+      printf("7 - Sair\n");
+      printf("Escolha: ");
+      scanf("%d", &menu_aux);
+      getchar();
+      switch (menu_aux)
+      {
+      case 1:
+        printf("Informe o seu nome completo: ");
+        fgets(pessoa[codigo.aux_posicao].nome_completo, MAX_C, stdin);
+        verificaNome(pessoa, codigo);
+        printf("Nome editado com sucesso!\n\n");
+        break;
+      case 2:
+        printf("Informe o seu email: ");
+        fgets(pessoa[codigo.aux_posicao].email, MAX_C, stdin);
+        verificaEmail(pessoa, codigo);
+        printf("Email editado com sucesso!\n\n");
+        break;
+      case 3:
+        printf("Informe o seu gênero. Escreva \"Feminino\", \"Masculino\" ou \"Não Declarar\": ");
+        fgets(pessoa[codigo.aux_posicao].genero, MAX_C, stdin);
+        verificaGenero(pessoa, codigo);
+        printf("Gênero editado com sucesso!\n\n");
+        break;
+      case 4:
+        printf("Informe o seu endereço: ");
+        printf("Informe o endereço [CEP]: ");
+        scanf("%[^\n]", pessoa[codigo.aux_posicao].endereco.cep);
+        getchar();
+        printf("Informe o endereço [ESTADO]: ");
+        scanf("%[^\n]", pessoa[codigo.aux_posicao].endereco.estado);
+        getchar();
+        printf("Informe o endereço [CIDADE]: ");
+        scanf("%[^\n]", pessoa[codigo.aux_posicao].endereco.cidade);
+        getchar();
+        printf("Informe o endereço [BAIRRO]: ");
+        scanf("%[^\n]", pessoa[codigo.aux_posicao].endereco.bairro);
+        getchar();
+        printf("Informe o endereço [RUA]: ");
+        scanf("%[^\n]", pessoa[codigo.aux_posicao].endereco.rua);
+        getchar();
+        printf("Endereço editado com sucesso!\n\n");
+        break;
+      case 5:
+        printf("Informe a sua altura: ");
+        scanf("%lf", &pessoa[codigo.aux_posicao].altura);
+        verificaAltura(pessoa, codigo);
+        getchar();
+        printf("Altura editada com sucesso.\n\n");
+        break;
+      case 6:
+        printf("Você se vacinou? Escreva \"Sim\" ou \"Não\": ");
+        verificaVacina(pessoa, codigo);
+        printf("Vacina editada com sucesso!\n\n");
+        break;
+      default:
+        printf("Opção inválida.\n");
+        system("pause");
+        break;
+      }
+    } while (menu_aux != 7);
+  }
+  else
+    printf("O ID informado não existe.\n");
+  system("pause");
+}
+void excluiUsuario(dados *pessoa, outrasVariaveis codigo)
+{
+  printf("Para excluir um cadastro informe o ID: ");
+  scanf("%d", &codigo.id_aux);
+  getchar();
+  if (verificaID(pessoa, codigo) == true)
+  {
+    codigo.aux_posicao = pegaPosicaoID(pessoa, codigo);
+    pessoa[codigo.aux_posicao].id = 0;
+    pessoa[codigo.aux_posicao].altura = 0;
+    pessoa[codigo.aux_posicao].vacina = false;
+    for (int i = 0; i < MAX_C; i++)
+    {
+      pessoa[codigo.aux_posicao].nome_completo[i] = '\0';
+      pessoa[codigo.aux_posicao].email[i] = '\0';
+      pessoa[codigo.aux_posicao].genero[i] = '\0';
+      pessoa[codigo.aux_posicao].endereco.rua[i] = '\0';
+      pessoa[codigo.aux_posicao].endereco.bairro[i] = '\0';
+      pessoa[codigo.aux_posicao].endereco.estado[i] = '\0';
+      pessoa[codigo.aux_posicao].endereco.cidade[i] = '\0';
+      pessoa[codigo.aux_posicao].endereco.cep[i] = '\0';
+    }
+    printf("Usuário excluido com sucesso!\n");
+  }
+  else
+    printf("O ID informado não existe.\n");
   system("pause");
 }
