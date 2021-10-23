@@ -107,7 +107,7 @@ int main()
     scanf("%d", &codigo.menu);
     system("cls");
     getchar();
-    //    codigo.usuario = pegaPosicaoID(pessoa->id, 0);
+    codigo.usuario = pegaPosicaoID(pessoa, codigo); //=0
     switch (codigo.menu)
     {
     case 1: // Cadastro de usuário.
@@ -118,7 +118,7 @@ int main()
       editarUsuario(pessoa, codigo);
       break;
     case 3: // Exclusão de usuário.
-      excluiUsuario(pessoa,codigo);
+      excluiUsuario(pessoa, codigo);
       codigo.quantidade_usuario--;
       break;
     case 4: // Pesquisa de usuário pelo ID.
@@ -182,7 +182,7 @@ void cadastraUsuario(dados *pessoa, outrasVariaveis codigo)
 {
   if (codigo.quantidade_usuario < MAX)
   {
-    //    preencheId(pessoa->id, codigo);
+    preencheId(pessoa, codigo);
     printf("O seu ID é \"%d\".\n\n", pessoa[codigo.usuario].id);
     printf("Informe o seu nome completo: ");
     fgets(pessoa[codigo.usuario].nome_completo, MAX_C, stdin);
@@ -245,7 +245,11 @@ void editarUsuario(dados *pessoa, outrasVariaveis codigo)
       printf("1 - Nome completo: %s", pessoa[codigo.aux_posicao].nome_completo);
       printf("2 - Email: %s", pessoa[codigo.aux_posicao].email);
       printf("3 - Gênero: %s", pessoa[codigo.aux_posicao].genero);
-      printf("4 - Endereço: %s", pessoa[codigo.aux_posicao].endereco);
+      printf("4 - Endereço: %s, ", pessoa[codigo.aux_posicao].endereco.cep);
+      printf("%s ", pessoa[codigo.aux_posicao].endereco.rua);
+      printf("%s, ", pessoa[codigo.aux_posicao].endereco.bairro);
+      printf("%s - ", pessoa[codigo.aux_posicao].endereco.cidade);
+      printf("%s\n", pessoa[codigo.aux_posicao].endereco.estado);
       printf("5 - Altura: %.2lf metros\n", pessoa[codigo.aux_posicao].altura);
       ((pessoa[codigo.aux_posicao].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
       printf("7 - Sair\n");
@@ -341,4 +345,150 @@ void excluiUsuario(dados *pessoa, outrasVariaveis codigo)
   else
     printf("O ID informado não existe.\n");
   system("pause");
+}
+void pesquisarCadastro(dados *pessoa, outrasVariaveis codigo)
+{
+  char continua;
+  do
+  {
+    system("cls");
+    printf("Informe o seu ID para continuar: ");
+    scanf("%d", &codigo.id_aux);
+    getchar();
+    system("cls");
+    if (verificaID(pessoa, codigo) == true)
+    {
+      codigo.aux_posicao = pegaPosicaoID(pessoa, codigo);
+      printf("ID: %d \n", pessoa[codigo.aux_posicao].id);
+      printf("1 - Nome completo: %s", pessoa[codigo.aux_posicao].nome_completo);
+      printf("2 - Email: %s", pessoa[codigo.aux_posicao].email);
+      printf("3 - Gênero: %s", pessoa[codigo.aux_posicao].genero);
+      printf("4 - Endereço: %s, ", pessoa[codigo.aux_posicao].endereco.cep);
+      printf("%s ", pessoa[codigo.aux_posicao].endereco.rua);
+      printf("%s, ", pessoa[codigo.aux_posicao].endereco.bairro);
+      printf("%s - ", pessoa[codigo.aux_posicao].endereco.cidade);
+      printf("%s\n", pessoa[codigo.aux_posicao].endereco.estado);
+      printf("5 - Altura: %.2lf metros\n", pessoa[codigo.aux_posicao].altura);
+      ((pessoa[codigo.aux_posicao].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
+    }
+    else
+      printf("O ID informado não existe.\n");
+    system("pause");
+    printf("\nDeseja fazer uma nova pesquisa? [S/N]: ");
+    scanf(" %c", &continua);
+  } while (continua == 'S' || continua == 's');
+}
+void pesquisarEmail(dados *pessoa, outrasVariaveis codigo)
+{
+  bool cadastroRetorno = false;
+  char continua, cadastroPesquisa[MAX_C];
+  do
+  {
+    printf("Informe o seu Email para continuar: ");
+    fgets(cadastroPesquisa, MAX_C, stdin);
+    for (int i = 0; i < MAX; i++)
+      if (strcmp(pessoa[codigo.usuario].email, cadastroPesquisa) == 0)
+      {
+        system("cls");
+        printf("ID: %d \n", pessoa[codigo.usuario].id);
+        printf("1 - Nome completo: %s", pessoa[codigo.usuario].nome_completo);
+        printf("2 - Email: %s", pessoa[codigo.usuario].email);
+        printf("3 - Gênero: %s", pessoa[codigo.usuario].genero);
+        printf("4 - Endereço: %s, ", pessoa[codigo.usuario].endereco.cep);
+        printf("%s ", pessoa[codigo.usuario].endereco.rua);
+        printf("%s, ", pessoa[codigo.usuario].endereco.bairro);
+        printf("%s - ", pessoa[codigo.usuario].endereco.cidade);
+        printf("%s\n", pessoa[codigo.usuario].endereco.estado);
+        printf("5 - Altura: %.2lf metros\n", pessoa[codigo.usuario].altura);
+        ((pessoa[codigo.usuario].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
+        cadastroRetorno = true;
+      }
+    if (cadastroRetorno == false)
+      printf("Email não encontrado.\n");
+    printf("\nDeseja fazer uma nova pesquisa? [S/N]: ");
+    scanf(" %c", &continua);
+  } while (continua == 'S' || continua == 's');
+}
+void listaCadastro(dados *pessoa, outrasVariaveis codigo)
+{
+  printf("**Lista de cadastros**\n");
+  if (codigo.quantidade_usuario == 0)
+  {
+    printf("Lista vazia!\n");
+    system("pause");
+  }
+  else
+  {
+    system("cls");
+    for (int i = 0; i < MAX; i++)
+      if (pessoa[codigo.usuario].id > 0)
+      {
+        printf("ID: %d \n", pessoa[codigo.usuario].id);
+        printf("1 - Nome completo: %s", pessoa[codigo.usuario].nome_completo);
+        printf("2 - Email: %s", pessoa[codigo.usuario].email);
+        printf("3 - Gênero: %s", pessoa[codigo.usuario].genero);
+        printf("4 - Endereço: %s, ", pessoa[codigo.usuario].endereco.cep);
+        printf("%s ", pessoa[codigo.usuario].endereco.rua);
+        printf("%s, ", pessoa[codigo.usuario].endereco.bairro);
+        printf("%s - ", pessoa[codigo.usuario].endereco.cidade);
+        printf("%s\n", pessoa[codigo.usuario].endereco.estado);
+        printf("5 - Altura: %.2lf metros\n", pessoa[codigo.usuario].altura);
+        ((pessoa[codigo.usuario].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
+      }
+    system("pause");
+  }
+}
+void backupCadastro(dados *pessoa, outrasVariaveis codigo, dados *backup)
+{
+  if (codigo.quantidade_usuario == 0)
+  {
+    printf("O backup não foi concluido.");
+    system("pause");
+  }
+  else
+  {
+    for (int i = 0; i < codigo.quantidade_usuario; i++)
+    {
+      backup[i].id = pessoa[i].id;
+      strcpy(backup[i].nome_completo, pessoa[i].nome_completo);
+      strcpy(backup[i].email, pessoa[i].email);
+      strcpy(backup[i].endereco.bairro, pessoa[i].endereco.bairro);
+      strcpy(backup[i].endereco.cep, pessoa[i].endereco.cep);
+      strcpy(backup[i].endereco.cidade, pessoa[i].endereco.cidade);
+      strcpy(backup[i].endereco.estado, pessoa[i].endereco.estado);
+      strcpy(backup[i].endereco.rua, pessoa[i].endereco.rua);
+      strcpy(backup[i].genero, pessoa[i].genero);
+      backup[i].altura = pessoa[i].altura;
+      backup[i].vacina = pessoa[i].vacina;
+    }
+    printf("Backup concluido!!\n");
+    system("pause");
+  }
+}
+void restaurarCadastro(dados *pessoa, outrasVariaveis codigo, dados *backup)
+{
+  if (codigo.quantidade_usuario == 0)
+  {
+    printf("A restauração não foi concluida.\n");
+    system("pause");
+  }
+  else
+  {
+    for (int i = 0; i < codigo.quantidade_usuario; i++)
+    {
+      pessoa[i].id = backup[i].id;
+      strcpy(pessoa[i].nome_completo, backup[i].nome_completo);
+      strcpy(pessoa[i].email, backup[i].email);
+      strcpy(pessoa[i].endereco.bairro, backup[i].endereco.bairro);
+      strcpy(pessoa[i].endereco.cep, backup[i].endereco.cep);
+      strcpy(pessoa[i].endereco.cidade, backup[i].endereco.cidade);
+      strcpy(pessoa[i].endereco.estado, backup[i].endereco.estado);
+      strcpy(pessoa[i].endereco.rua, backup[i].endereco.rua);
+      strcpy(pessoa[i].genero, backup[i].genero);
+      pessoa[i].altura = backup[i].altura;
+      pessoa[i].vacina = backup[i].vacina;
+    }
+    printf("Restauração concluida!\n");
+    system("pause");
+  }
 }
