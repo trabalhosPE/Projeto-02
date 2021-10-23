@@ -48,7 +48,6 @@ typedef struct
 } outrasVariaveis;
 
 // Funções do menu principal:
-void configInicial(dados *pessoa, dados *backup);                             // Função que atribui valores iniciais para as variáveis.
 void cadastraUsuario(dados *pessoa, outrasVariaveis codigo);                  // Função que cadastra um usuário.
 void editarUsuario(dados *pessoa, outrasVariaveis codigo);                    // Função que edita um usuário.
 void excluiUsuario(dados *pessoa, outrasVariaveis codigo);                    // Função que exclui um usuário.
@@ -64,12 +63,12 @@ void verificaEmail(dados *pessoa, outrasVariaveis codigo);  // Função que veri
 void verificaGenero(dados *pessoa, outrasVariaveis codigo); // Função que verifica se o gênero é válido.
 void verificaAltura(dados *pessoa, outrasVariaveis codigo); // Função que verifica se a altura é válida.
 void verificaVacina(dados *pessoa, outrasVariaveis codigo); // Função que verifica se o usuário é vacinado.
-bool verificaID(dados *pessoa, outrasVariaveis codigo);     // Função que verifica se o ID existe.
+bool verificaID(dados *pessoa, int tmp);                    // Função que verifica se o ID existe.
 
 // Outras funções:
-void criacaoConta(outrasVariaveis codigo);                // Função que cria uma conta (necessária para fazer o backup).
-void preencheId(dados *pessoa, outrasVariaveis codigo);   // Função que radomiza os IDs.
-int pegaPosicaoID(dados *pessoa, outrasVariaveis codigo); // Função que pega a posição do ID no vetor de IDs.
+void criacaoConta(outrasVariaveis *codigo); // Função que cria uma conta.
+void preencheId(dados *pessoa, int tmp);    // Função que radomiza os IDs.
+int pegaPosicaoID(dados *pessoa, int tmp);  // Função que pega a posição do ID no vetor de IDs.
 
 // Inicio do Algoritmo Principal:
 int main()
@@ -81,13 +80,10 @@ int main()
   dados backup[MAX];
   outrasVariaveis codigo;
 
-  // Atribuição de valores iniciais para as variáveis:
-  configInicial(pessoa, backup);
-
   // Criação de conta:
   printf("Olá, seja bem-vindo ao cadastro online da Universidade Católica de Brasília.\n");
   printf("Crie sua conta...\n");
-  criacaoConta(codigo);
+  criacaoConta(&codigo);
 
   // Menu principal:
   do
@@ -108,7 +104,7 @@ int main()
     scanf("%d", &codigo.menu);
     system("cls");
     getchar();
-    codigo.usuario = pegaPosicaoID(pessoa, codigo); //=0
+    codigo.usuario = pegaPosicaoID(pessoa, 0);
     switch (codigo.menu)
     {
     case 1: // Cadastro de usuário.
@@ -148,42 +144,11 @@ int main()
 // Fim do algoritmo principal.
 
 // Funções:
-void configInicial(dados *pessoa, dados *backup)
-{
-  for (int i = 0; i < MAX; i++)
-  {
-    pessoa[i].id = 0;
-    backup[i].id = 0;
-    pessoa[i].altura = 0;
-    backup[i].altura = 0;
-    pessoa[i].vacina = false;
-    backup[i].vacina = false;
-    for (int j = 0; j < MAX_C; j++)
-    {
-      pessoa[i].nome_completo[j] = '\0';
-      backup[i].nome_completo[j] = '\0';
-      pessoa[i].email[j] = '\0';
-      backup[i].email[j] = '\0';
-      pessoa[i].genero[j] = '\0';
-      backup[i].genero[j] = '\0';
-      pessoa[i].endereco.rua[j] = '\0';
-      backup[i].endereco.rua[j] = '\0';
-      pessoa[i].endereco.bairro[j] = '\0';
-      backup[i].endereco.bairro[j] = '\0';
-      pessoa[i].endereco.estado[j] = '\0';
-      backup[i].endereco.estado[j] = '\0';
-      pessoa[i].endereco.cidade[j] = '\0';
-      backup[i].endereco.cidade[j] = '\0';
-      pessoa[i].endereco.cep[j] = '\0';
-      backup[i].endereco.cep[j] = '\0';
-    }
-  }
-}
 void cadastraUsuario(dados *pessoa, outrasVariaveis codigo)
 {
   if (codigo.quantidade_usuario < MAX)
   {
-    preencheId(pessoa, codigo);
+    preencheId(pessoa, codigo.usuario);
     printf("O seu ID é \"%d\".\n\n", pessoa[codigo.usuario].id);
     printf("Informe o seu nome completo: ");
     fgets(pessoa[codigo.usuario].nome_completo, MAX_C, stdin);
@@ -235,9 +200,9 @@ void editarUsuario(dados *pessoa, outrasVariaveis codigo)
   printf("Para editar, primeiro informe o seu ID: ");
   scanf("%d", &codigo.id_aux);
   getchar();
-  if (verificaID(pessoa, codigo) == true)
+  if (verificaID(pessoa, codigo.id_aux) == true)
   {
-    codigo.aux_posicao = pegaPosicaoID(pessoa, codigo);
+    codigo.aux_posicao = pegaPosicaoID(pessoa, codigo.id_aux);
     do
     {
       system("cls");
@@ -324,9 +289,9 @@ void excluiUsuario(dados *pessoa, outrasVariaveis codigo)
   printf("Para excluir um cadastro informe o ID: ");
   scanf("%d", &codigo.id_aux);
   getchar();
-  if (verificaID(pessoa, codigo) == true)
+  if (verificaID(pessoa, codigo.id_aux) == true)
   {
-    codigo.aux_posicao = pegaPosicaoID(pessoa, codigo);
+    codigo.aux_posicao = pegaPosicaoID(pessoa, codigo.id_aux);
     pessoa[codigo.aux_posicao].id = 0;
     pessoa[codigo.aux_posicao].altura = 0;
     pessoa[codigo.aux_posicao].vacina = false;
@@ -357,9 +322,9 @@ void pesquisarCadastro(dados *pessoa, outrasVariaveis codigo)
     scanf("%d", &codigo.id_aux);
     getchar();
     system("cls");
-    if (verificaID(pessoa, codigo) == true)
+    if (verificaID(pessoa, codigo.id_aux) == true)
     {
-      codigo.aux_posicao = pegaPosicaoID(pessoa, codigo);
+      codigo.aux_posicao = pegaPosicaoID(pessoa, codigo.id_aux);
       printf("ID: %d \n", pessoa[codigo.aux_posicao].id);
       printf("1 - Nome completo: %s", pessoa[codigo.aux_posicao].nome_completo);
       printf("2 - Email: %s", pessoa[codigo.aux_posicao].email);
@@ -493,9 +458,6 @@ void restaurarCadastro(dados *pessoa, outrasVariaveis codigo, dados *backup)
     system("pause");
   }
 }
-//
-// Funções de verificação:
-// Verificação de Nome
 void verificaNome(dados *pessoa, outrasVariaveis codigo)
 {
   if (strcmp(pessoa[codigo.usuario].nome_completo, "\n") == 0)
@@ -507,7 +469,6 @@ void verificaNome(dados *pessoa, outrasVariaveis codigo)
       fgets(pessoa[codigo.usuario].nome_completo, MAX_C, stdin);
     } while (strcmp(pessoa[codigo.usuario].nome_completo, "\n") == 0);
 }
-// Verificação do Email
 void verificaEmail(dados *pessoa, outrasVariaveis codigo)
 {
   if (strchr(pessoa[codigo.usuario].email, '@') == NULL)
@@ -519,7 +480,6 @@ void verificaEmail(dados *pessoa, outrasVariaveis codigo)
       fgets(pessoa[codigo.usuario].email, MAX_C, stdin);
     } while (strchr(pessoa[codigo.usuario].email, '@') == NULL);
 }
-// Verificação de genero
 void verificaGenero(dados *pessoa, outrasVariaveis codigo)
 {
   for (int i = 0; i < strlen(pessoa[codigo.usuario].genero); i++)
@@ -539,7 +499,6 @@ void verificaGenero(dados *pessoa, outrasVariaveis codigo)
     verificaGenero(pessoa, codigo);
   }
 }
-// Verificação Altura:
 void verificaAltura(dados *pessoa, outrasVariaveis codigo)
 {
   if (pessoa[codigo.usuario].altura < 1 || pessoa[codigo.usuario].altura > 2)
@@ -551,8 +510,6 @@ void verificaAltura(dados *pessoa, outrasVariaveis codigo)
       scanf("%lf", &pessoa[codigo.usuario].altura);
     } while (pessoa[codigo.usuario].altura < 1 || pessoa[codigo.usuario].altura > 2);
 }
-// Verificação Vacina:
-
 void verificaVacina(dados *pessoa, outrasVariaveis codigo)
 {
   char aux[4 + 2];
@@ -574,45 +531,35 @@ void verificaVacina(dados *pessoa, outrasVariaveis codigo)
     verificaVacina(pessoa, codigo);
   }
 }
-// Verificação de ID:
-
-bool verificaID(dados *pessoa, outrasVariaveis codigo)
+bool verificaID(dados *pessoa, int tmp)
 {
   for (int i = 0; i < MAX; i++)
-    if (codigo.id_aux == pessoa[i].id)
+    if (tmp == pessoa[i].id)
       return true;
   return false;
 }
-
-// Outras Funções:
-// Função de Criação de conta:
-void criacaoConta(outrasVariaveis codigo)
+void criacaoConta(outrasVariaveis *codigo)
 {
   system("pause");
   system("cls");
   printf("Crie o seu login: ");
-  fgets(codigo.login, MAX_C, stdin);
+  fgets(codigo->login, MAX_C, stdin);
   printf("Crie a sua senha: ");
-  fgets(codigo.senha, MAX_C, stdin);
+  fgets(codigo->senha, MAX_C, stdin);
 }
-
-// Função Preencher ID: OBS: erro no while (verificaID(pessoa.id, numero_randomico) == true);
-
-void preencheId(dados *pessoa, outrasVariaveis codigo)
+void preencheId(dados *pessoa, int tmp)
 {
   int numero_randomico;
   do
   {
     numero_randomico = (1 + rand() % MAX);
-  } while (verificaID(pessoa.id, numero_randomico) == true);
-  pessoa[codigo.usuario].id = numero_randomico;
+  } while (verificaID(pessoa, numero_randomico) == true);
+  pessoa[tmp].id = numero_randomico;
 }
-
-// Função Posição ID:
-int pegaPosicaoID(dados *pessoa, outrasVariaveis codigo)
+int pegaPosicaoID(dados *pessoa, int tmp)
 {
   int i = 0;
-  while (pessoa[i].id != codigo.id_aux)
+  while (pessoa[i].id != tmp)
     i++;
   return i;
 }
