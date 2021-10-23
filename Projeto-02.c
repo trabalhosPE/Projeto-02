@@ -385,21 +385,20 @@ void listaCadastro(dados *pessoa, outrasVariaveis codigo)
   }
   else
   {
-    system("cls");
     for (int i = 0; i < MAX; i++)
-      if (pessoa[codigo.usuario].id > 0)
+      if (pessoa[i].id > 0)
       {
-        printf("ID: %d \n", pessoa[codigo.usuario].id);
-        printf("1 - Nome completo: %s", pessoa[codigo.usuario].nome_completo);
-        printf("2 - Email: %s", pessoa[codigo.usuario].email);
-        printf("3 - Gênero: %s", pessoa[codigo.usuario].genero);
-        printf("4 - Endereço: %s, ", pessoa[codigo.usuario].endereco.cep);
-        printf("%s ", pessoa[codigo.usuario].endereco.rua);
-        printf("%s, ", pessoa[codigo.usuario].endereco.bairro);
-        printf("%s - ", pessoa[codigo.usuario].endereco.cidade);
-        printf("%s\n", pessoa[codigo.usuario].endereco.estado);
-        printf("5 - Altura: %.2lf metros\n", pessoa[codigo.usuario].altura);
-        ((pessoa[codigo.usuario].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
+        printf("ID: %d \n", pessoa[i].id);
+        printf("1 - Nome completo: %s", pessoa[i].nome_completo);
+        printf("2 - Email: %s", pessoa[i].email);
+        printf("3 - Gênero: %s", pessoa[i].genero);
+        printf("4 - Endereço: %s, ", pessoa[i].endereco.cep);
+        printf("%s ", pessoa[i].endereco.rua);
+        printf("%s, ", pessoa[i].endereco.bairro);
+        printf("%s - ", pessoa[i].endereco.cidade);
+        printf("%s\n", pessoa[i].endereco.estado);
+        printf("5 - Altura: %.2lf metros\n", pessoa[i].altura);
+        ((pessoa[i].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
       }
     system("pause");
   }
