@@ -12,8 +12,8 @@
 #include <ctype.h>
 
 // Constantes:
-#define MAX 1000     // MAX é número máximo de usuários que serão cadastrados.
-#define MAX_C 50 + 2 // MAX_C é número máximo de caracteres que cada variável char pode ler.
+#define MAX 3         // MAX é número máximo de usuários que serão cadastrados.
+#define MAX_C 100 + 2 // MAX_C é número máximo de caracteres que cada variável char pode ler.
 
 // Variaveis Struct:
 typedef struct
@@ -48,6 +48,7 @@ typedef struct
 } outrasVariaveis;
 
 // Funções do menu principal:
+void configInicial(dados *pessoa, dados *backup);                             // Função que atribui valores iniciais para as variáveis.
 void cadastraUsuario(dados *pessoa, outrasVariaveis codigo);                  // Função que cadastra um usuário.
 void editarUsuario(dados *pessoa, outrasVariaveis codigo);                    // Função que edita um usuário.
 void excluiUsuario(dados *pessoa, outrasVariaveis codigo);                    // Função que exclui um usuário.
@@ -79,6 +80,9 @@ int main()
   dados pessoa[MAX];
   dados backup[MAX];
   outrasVariaveis codigo;
+
+  // Atribuição de valores iniciais para as variáveis:
+  configInicial(pessoa, backup);
 
   // Criação de conta:
   printf("Olá, seja bem-vindo ao cadastro online da Universidade Católica de Brasília.\n");
@@ -144,6 +148,37 @@ int main()
 // Fim do algoritmo principal.
 
 // Funções:
+void configInicial(dados *pessoa, dados *backup)
+{
+  for (int i = 0; i < MAX; i++)
+  {
+    pessoa[i].id = 0;
+    backup[i].id = 0;
+    pessoa[i].altura = 0;
+    backup[i].altura = 0;
+    pessoa[i].vacina = false;
+    backup[i].vacina = false;
+    for (int j = 0; j < MAX_C; j++)
+    {
+      pessoa[i].nome_completo[j] = '\0';
+      backup[i].nome_completo[j] = '\0';
+      pessoa[i].email[j] = '\0';
+      backup[i].email[j] = '\0';
+      pessoa[i].genero[j] = '\0';
+      backup[i].genero[j] = '\0';
+      pessoa[i].endereco.rua[j] = '\0';
+      backup[i].endereco.rua[j] = '\0';
+      pessoa[i].endereco.bairro[j] = '\0';
+      backup[i].endereco.bairro[j] = '\0';
+      pessoa[i].endereco.estado[j] = '\0';
+      backup[i].endereco.estado[j] = '\0';
+      pessoa[i].endereco.cidade[j] = '\0';
+      backup[i].endereco.cidade[j] = '\0';
+      pessoa[i].endereco.cep[j] = '\0';
+      backup[i].endereco.cep[j] = '\0';
+    }
+  }
+}
 void cadastraUsuario(dados *pessoa, outrasVariaveis codigo)
 {
   if (codigo.quantidade_usuario < MAX)
@@ -272,6 +307,8 @@ void editarUsuario(dados *pessoa, outrasVariaveis codigo)
         printf("Você se vacinou? Escreva \"Sim\" ou \"Não\": ");
         verificaVacina(pessoa, codigo);
         printf("Vacina editada com sucesso!\n\n");
+        break;
+      case 7:
         break;
       default:
         printf("Opção inválida.\n");
@@ -562,3 +599,41 @@ int pegaPosicaoID(dados *pessoa, int tmp)
     i++;
   return i;
 }
+/*
+luizg825
+1597531289Lg
+1
+Luiz Gustavo da Costa Gonçalves
+gustavo-mp2011@hotmail.com
+Masculino
+72705-010
+Distrito Federal
+Brazlândia
+Setor Norte
+01
+1.75
+sim
+1
+Maria Aparecida Ramos da Costa
+cidagoncalves@gmail.com
+feminino
+72705-919
+Minas Gerais
+Belo Horizonte
+Seilaonde
+55
+1.46
+não
+1
+Carlos Eduardo de Souza Gonçalves
+carlosodudu@gmail.com
+Não declarar
+75849-456
+Rio Grande do Sul
+Porto Alegre
+bah guri
+46
+2
+não
+
+*/
