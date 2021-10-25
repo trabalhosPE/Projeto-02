@@ -12,7 +12,7 @@
 #include <ctype.h>
 
 // Constantes:
-#define MAX 3         // MAX é número máximo de usuários que serão cadastrados.
+#define MAX 1000      // MAX é número máximo de usuários que serão cadastrados.
 #define MAX_C 100 + 2 // MAX_C é número máximo de caracteres que cada variável char pode ler.
 
 // Variaveis Struct:
@@ -390,20 +390,20 @@ void pesquisarEmail(dados *pessoa, outrasVariaveis codigo)
     printf("Informe o seu Email para continuar: ");
     fgets(cadastroPesquisa, MAX_C, stdin);
     for (int i = 0; i < MAX; i++)
-      if (strcmp(pessoa[codigo.usuario].email, cadastroPesquisa) == 0)
+      if (strcmp(pessoa[i].email, cadastroPesquisa) == 0)
       {
         system("cls");
-        printf("ID: %d \n", pessoa[codigo.usuario].id);
-        printf("1 - Nome completo: %s", pessoa[codigo.usuario].nome_completo);
-        printf("2 - Email: %s", pessoa[codigo.usuario].email);
-        printf("3 - Gênero: %s", pessoa[codigo.usuario].genero);
-        printf("4 - Endereço: %s, ", pessoa[codigo.usuario].endereco.cep);
-        printf("%s ", pessoa[codigo.usuario].endereco.rua);
-        printf("%s, ", pessoa[codigo.usuario].endereco.bairro);
-        printf("%s - ", pessoa[codigo.usuario].endereco.cidade);
-        printf("%s\n", pessoa[codigo.usuario].endereco.estado);
-        printf("5 - Altura: %.2lf metros\n", pessoa[codigo.usuario].altura);
-        ((pessoa[codigo.usuario].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
+        printf("ID: %d \n", pessoa[i].id);
+        printf("1 - Nome completo: %s", pessoa[i].nome_completo);
+        printf("2 - Email: %s", pessoa[i].email);
+        printf("3 - Gênero: %s", pessoa[i].genero);
+        printf("4 - Endereço: %s, ", pessoa[i].endereco.cep);
+        printf("%s ", pessoa[i].endereco.rua);
+        printf("%s, ", pessoa[i].endereco.bairro);
+        printf("%s - ", pessoa[i].endereco.cidade);
+        printf("%s\n", pessoa[i].endereco.estado);
+        printf("5 - Altura: %.2lf metros\n", pessoa[i].altura);
+        ((pessoa[i].vacina == true) ? (printf("6 - Vacinado(a): Sim\n")) : (printf("6 - Vacinado(a): Não\n")));
         cadastroRetorno = true;
       }
     if (cadastroRetorno == false)
@@ -599,41 +599,3 @@ int pegaPosicaoID(dados *pessoa, int tmp)
     i++;
   return i;
 }
-/*
-luizg825
-1597531289Lg
-1
-Luiz Gustavo da Costa Gonçalves
-gustavo-mp2011@hotmail.com
-Masculino
-72705-010
-Distrito Federal
-Brazlândia
-Setor Norte
-01
-1.75
-sim
-1
-Maria Aparecida Ramos da Costa
-cidagoncalves@gmail.com
-feminino
-72705-919
-Minas Gerais
-Belo Horizonte
-Seilaonde
-55
-1.46
-não
-1
-Carlos Eduardo de Souza Gonçalves
-carlosodudu@gmail.com
-Não declarar
-75849-456
-Rio Grande do Sul
-Porto Alegre
-bah guri
-46
-2
-não
-
-*/
